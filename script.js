@@ -20,7 +20,15 @@ async function getExchangeRate(currencyCode) {
 // funkcja do przeliczania kwoty z wybranej waluty na złotówki
 async function convertCurrency() {
     const currencyCode = currencySelect.value;
-    const amount = amountInput.value;
+    const amount = parseFloat(amountInput.value);
+
+    if (isNaN(amount) || amount < 0.01) {
+        // wyświetlenie komunikatu o błędzie
+        errorDiv.textContent = 'Podaj poprawna kwote (minimum 0.01).';
+        resultDiv.innerHTML = '';
+        resultDiv.appendChild(errorDiv);
+        return;
+    }
 
     // wyświetlenie loadera
     resultDiv.innerHTML = '<div class="loader"></div>';
@@ -28,7 +36,7 @@ async function convertCurrency() {
     try {
         const exchangeRate = await getExchangeRate(currencyCode);
         const result = amount * exchangeRate;
-        resultDiv.textContent = `${amount} ${currencyCode} = ${result.toFixed(2)} PLN`;
+        resultDiv.textContent = `${amount.toFixed(2)} ${currencyCode} = ${result.toFixed(2)} PLN`;
     } catch (error) {
         // wyświetlenie komunikatu o błędzie
         errorDiv.textContent = error.message;
